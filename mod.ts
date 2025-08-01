@@ -16,6 +16,9 @@ interface NavigatorPolyfill extends Navigator {
 		platform?: NavigatorUserAgentDataPlatform;
 	};
 }
+/**
+ * Architecture of the runtime.
+ */
 export type RuntimeArch =
 	| "arm"
 	| "arm64"
@@ -29,12 +32,18 @@ export type RuntimeArch =
 	| "s390x"
 	| "x64"
 	| "x86";
+/**
+ * Name of the runtime.
+ */
 export type RuntimeName =
 	| "browser"
 	| "bun"
 	| "cloudflare-workers"
 	| "deno"
 	| "nodejs";
+/**
+ * Name of the system.
+ */
 export type SystemName =
 	| "aix"
 	| "android"
@@ -189,6 +198,21 @@ function getSystemName(): SystemName | null {
 	}
 	return null;
 }
+/**
+ * Architecture of the runtime.
+ * 
+ * Return `null` if unknown.
+ */
 export const runtimeArch: RuntimeArch | null = getRuntimeArch();
+/**
+ * Name of the runtime.
+ * 
+ * Return `null` if unknown.
+ */
 export const runtimeName: RuntimeName | null = getRuntimeName();
+/**
+ * Name of the system.
+ * 
+ * Return `null` if unknown.
+ */
 export const systemName: SystemName | null = getSystemName();
