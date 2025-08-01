@@ -51,15 +51,15 @@ export type SystemName =
 	| "openbsd"
 	| "solaris"
 	| "windows";
-const esNavigator = globalThis?.navigator as NavigatorPolyfill;
+const rfES = globalThis?.navigator as NavigatorPolyfill;
 //@ts-ignore `Bun` maybe not exist.
 const rfBun = globalThis?.Bun;
 //dnt-shim-ignore
-const rfDenoBuild = globalThis?.Deno?.build;
+const rfDeno = globalThis?.Deno?.build;
 //@ts-ignore `process` maybe not exist.
-const rfNodeProcess = globalThis?.process;
+const rfNode = globalThis?.process;
 function getRuntimeArch(): RuntimeArch | null {
-	switch (rfDenoBuild?.arch) {
+	switch (rfDeno?.arch) {
 		case "aarch64":
 			return "arm64";
 		case "x86_64":
@@ -67,7 +67,7 @@ function getRuntimeArch(): RuntimeArch | null {
 		default:
 			break;
 	}
-	switch (rfNodeProcess?.arch) {
+	switch (rfNode?.arch) {
 		case "arm":
 		case "arm64":
 		case "loong64":
@@ -79,7 +79,7 @@ function getRuntimeArch(): RuntimeArch | null {
 		case "s390":
 		case "s390x":
 		case "x64":
-			return rfNodeProcess.arch;
+			return rfNode.arch;
 		case "ia32":
 			return "x86";
 		default:
@@ -88,38 +88,39 @@ function getRuntimeArch(): RuntimeArch | null {
 	return null;
 }
 function getRuntimeName(): RuntimeName | null {
-	if (esNavigator.userAgent === "Cloudflare-Workers") {
+	if (rfES.userAgent === "Cloudflare-Workers") {
 		return "cloudflare-workers";
 	}
 	if (typeof rfBun !== "undefined") {
 		return "bun";
 	}
-	if (typeof rfDenoBuild !== "undefined") {
+	if (typeof rfDeno !== "undefined") {
 		return "deno";
 	}
-	if (typeof rfNodeProcess !== "undefined") {
+	if (typeof rfNode !== "undefined") {
 		return "nodejs";
 	}
 	if (
-		esNavigator?.userAgentData?.brands?.brand === "Android System WebView" ||
-		esNavigator?.userAgentData?.brands?.brand === "Chrome" ||
-		esNavigator?.userAgentData?.brands?.brand === "Chromium" ||
-		esNavigator?.userAgentData?.brands?.brand === "Edge" ||
-		esNavigator?.userAgentData?.brands?.brand === "Firefox" ||
-		esNavigator?.userAgentData?.brands?.brand === "Google Chrome" ||
-		esNavigator?.userAgentData?.brands?.brand === "Microsoft Edge" ||
-		esNavigator?.userAgentData?.brands?.brand === "Mozilla Firefox" ||
-		esNavigator?.userAgentData?.brands?.brand === "Opera" ||
-		esNavigator?.userAgentData?.brands?.brand === "Safari" ||
-		esNavigator?.userAgentData?.brands?.brand === "Samsung Internet" ||
-		esNavigator?.userAgentData?.brands?.brand === "WebView"
+		rfES?.userAgentData?.brands?.brand === "Android System WebView" ||
+		rfES?.userAgentData?.brands?.brand === "Chrome" ||
+		rfES?.userAgentData?.brands?.brand === "Chromium" ||
+		rfES?.userAgentData?.brands?.brand === "Edge" ||
+		rfES?.userAgentData?.brands?.brand === "Firefox" ||
+		rfES?.userAgentData?.brands?.brand === "Google Chrome" ||
+		rfES?.userAgentData?.brands?.brand === "Microsoft Edge" ||
+		rfES?.userAgentData?.brands?.brand === "Mozilla Firefox" ||
+		rfES?.userAgentData?.brands?.brand === "Opera" ||
+		rfES?.userAgentData?.brands?.brand === "Safari" ||
+		rfES?.userAgentData?.brands?.brand === "Samsung Internet" ||
+		rfES?.userAgentData?.brands?.brand === "WebView" ||
+		rfES?.userAgentData?.brands?.brand?.endsWith(" WebView")
 	) {
 		return "browser";
 	}
 	return null;
 }
 function getSystemName(): SystemName | null {
-	switch (rfDenoBuild?.os) {
+	switch (rfDeno?.os) {
 		case "aix":
 		case "android":
 		case "freebsd":
@@ -128,13 +129,13 @@ function getSystemName(): SystemName | null {
 		case "netbsd":
 		case "solaris":
 		case "windows":
-			return rfDenoBuild.os;
+			return rfDeno.os;
 		case "darwin":
 			return "macos";
 		default:
 			break;
 	}
-	switch (rfNodeProcess?.platform) {
+	switch (rfNode?.platform) {
 		case "aix":
 		case "android":
 		case "cygwin":
@@ -143,7 +144,7 @@ function getSystemName(): SystemName | null {
 		case "linux":
 		case "netbsd":
 		case "openbsd":
-			return rfNodeProcess.platform;
+			return rfNode.platform;
 		case "darwin":
 			return "macos";
 		case "sunos":
@@ -153,7 +154,7 @@ function getSystemName(): SystemName | null {
 		default:
 			break;
 	}
-	switch (esNavigator?.userAgentData?.platform) {
+	switch (rfES?.userAgentData?.platform) {
 		case "Android":
 			return "android";
 		case "Chrome OS":
@@ -171,19 +172,19 @@ function getSystemName(): SystemName | null {
 		default:
 			break;
 	}
-	if (esNavigator?.platform === "iPhone") {
+	if (rfES?.platform === "iPhone") {
 		return "ios";
 	}
-	if (esNavigator?.platform?.startsWith("Linux")) {
+	if (rfES?.platform?.startsWith("Linux")) {
 		return "linux";
 	}
 	if (
-		esNavigator?.platform === "MacIntel" ||
-		esNavigator?.platform?.startsWith("Mac")
+		rfES?.platform === "MacIntel" ||
+		rfES?.platform?.startsWith("Mac")
 	) {
 		return "macos";
 	}
-	if (esNavigator?.platform === "Win32") {
+	if (rfES?.platform === "Win32") {
 		return "windows";
 	}
 	return null;
