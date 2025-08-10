@@ -199,20 +199,14 @@ function getSystemName(): SystemName | null {
 	return null;
 }
 /**
- * Architecture of the runtime.
- * 
- * Return `null` if unknown.
+ * Architecture of the runtime, or `null` if unknown.
  */
 export const runtimeArch: RuntimeArch | null = getRuntimeArch();
 /**
- * Name of the runtime.
- * 
- * Return `null` if unknown.
+ * Name of the runtime, or `null` if unknown.
  */
 export const runtimeName: RuntimeName | null = getRuntimeName();
 /**
- * Name of the system.
- * 
- * Return `null` if unknown.
+ * Name of the system, or `null` if unknown.
  */
 export const systemName: SystemName | null = getSystemName();
