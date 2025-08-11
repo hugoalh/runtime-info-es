@@ -54,13 +54,22 @@ An ECMAScript (JavaScript & TypeScript) module for runtime information.
 ## 🧩 APIs
 
 - ```ts
-  const runtimeArch: RuntimeArch | null
+  const runtimeArch: RuntimeArch | null;
   ```
 - ```ts
-  const runtimeName: RuntimeName | null
+  const runtimeName: RuntimeName | null;
   ```
 - ```ts
-  const systemName: SystemName | null
+  const runtimeIsCompatibleNode: boolean;
+  ```
+- ```ts
+  const runtimeIsCompatibleTypeScriptFull: boolean;
+  ```
+- ```ts
+  const runtimeIsCompatibleTypeScriptLite: boolean;
+  ```
+- ```ts
+  const systemName: SystemName | null;
   ```
 - ```ts
   type RuntimeArch =

@@ -207,6 +207,42 @@ export const runtimeArch: RuntimeArch | null = getRuntimeArch();
  */
 export const runtimeName: RuntimeName | null = getRuntimeName();
 /**
+ * Whether the runtime is compatible to the `node` modules.
+ */
+export const runtimeIsCompatibleNode: boolean = (
+	runtimeName === "bun" ||
+	runtimeName === "cloudflare-workers" ||
+	runtimeName === "deno" ||
+	runtimeName === "nodejs"
+);
+/**
+ * Whether the runtime is compatible to the TypeScript in full support.
+ */
+export const runtimeIsCompatibleTypeScriptFull: boolean = (
+	runtimeName === "bun" ||
+	runtimeName === "deno" ||
+	((
+		runtimeName === "cloudflare-workers" ||
+		runtimeName === "nodejs"
+	) && rfNode?.features?.typescript === "transform")
+);
+/**
+ * Whether the runtime is compatible to the TypeScript in limit/lite support.
+ */
+export const runtimeIsCompatibleTypeScriptLite: boolean = (
+	runtimeName === "bun" ||
+	runtimeName === "deno" ||
+	(
+		(
+			runtimeName === "cloudflare-workers" ||
+			runtimeName === "nodejs"
+		) && (
+			rfNode?.features?.typescript === "transform" ||
+			rfNode?.features?.typescript === "strip"
+		)
+	)
+);
+/**
  * Name of the system, or `null` if unknown.
  */
 export const systemName: SystemName | null = getSystemName();
