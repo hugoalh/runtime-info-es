@@ -2,9 +2,10 @@
 
 [**⚖️** MIT](./LICENSE.md)
 
-[![GitHub: hugoalh/runtime-info-es](https://img.shields.io/github/v/release/hugoalh/runtime-info-es?label=hugoalh/runtime-info-es&labelColor=181717&logo=github&logoColor=ffffff&sort=semver&style=flat "GitHub: hugoalh/runtime-info-es")](https://github.com/hugoalh/runtime-info-es)
-[![JSR: @hugoalh/runtime-info](https://img.shields.io/jsr/v/@hugoalh/runtime-info?label=@hugoalh/runtime-info&labelColor=F7DF1E&logo=jsr&logoColor=000000&style=flat "JSR: @hugoalh/runtime-info")](https://jsr.io/@hugoalh/runtime-info)
-[![NPM: @hugoalh/runtime-info](https://img.shields.io/npm/v/@hugoalh/runtime-info?label=@hugoalh/runtime-info&labelColor=CB3837&logo=npm&logoColor=ffffff&style=flat "NPM: @hugoalh/runtime-info")](https://www.npmjs.com/package/@hugoalh/runtime-info)
+🔗
+[GitHub](https://github.com/hugoalh/runtime-info-es)
+[JSR](https://jsr.io/@hugoalh/runtime-info)
+[NPM](https://www.npmjs.com/package/@hugoalh/runtime-info)
 
 An ECMAScript module for runtime information.
 
