@@ -7,7 +7,7 @@ type NavigatorUserAgentDataPlatform =
 	| "macOS"
 	| "Windows"
 	| "Unknown";
-interface NavigatorPolyfill extends Navigator {
+interface NavigatorPolyfill extends Partial<Navigator> {
 	platform?: string;
 	userAgentData?: {
 		brands?: {
@@ -60,15 +60,16 @@ export type SystemName =
 	| "openbsd"
 	| "solaris"
 	| "windows";
-const rfES = globalThis?.navigator as NavigatorPolyfill;
+export type TypeScriptSupportStatus = boolean | "lite";
+const rtiES = globalThis?.navigator as NavigatorPolyfill;
 //@ts-ignore `Bun` maybe not exist.
-const rfBun = globalThis?.Bun;
+const rtiBun = globalThis?.Bun;
 //dnt-shim-ignore
-const rfDeno = globalThis?.Deno?.build;
+const rtiDeno = globalThis?.Deno?.build;
 //@ts-ignore `process` maybe not exist.
-const rfNode = globalThis?.process;
+const rtiNode = globalThis?.process;
 function getRuntimeArch(): RuntimeArch | null {
-	switch (rfDeno?.arch) {
+	switch (rtiDeno?.arch) {
 		case "aarch64":
 			return "arm64";
 		case "x86_64":
@@ -76,86 +77,111 @@ function getRuntimeArch(): RuntimeArch | null {
 		default:
 			break;
 	}
-	switch (rfNode?.arch) {
+	switch (rtiNode?.arch as string) {
 		case "arm":
+			return "arm";
 		case "arm64":
-		case "loong64":
-		case "mips":
-		case "mipsel":
-		case "ppc":
-		case "ppc64":
-		case "riscv64":
-		case "s390":
-		case "s390x":
-		case "x64":
-			return rfNode.arch;
+			return "arm64";
 		case "ia32":
+		case "x32":
 			return "x86";
+		case "loong64":
+			return "loong64";
+		case "mips":
+			return "mips";
+		case "mipsel":
+			return "mipsel";
+		case "ppc":
+			return "ppc";
+		case "ppc64":
+			return "ppc64";
+		case "riscv64":
+			return "riscv64";
+		case "s390":
+			return "s390x";
+		case "s390x":
+			return "s390x";
+		case "x64":
+			return "x64";
 		default:
 			break;
 	}
 	return null;
 }
 function getRuntimeName(): RuntimeName | null {
-	if (rfES.userAgent === "Cloudflare-Workers") {
+	if (rtiES.userAgent === "Cloudflare-Workers") {
 		return "cloudflare-workers";
 	}
-	if (typeof rfBun !== "undefined") {
+	if (typeof rtiBun !== "undefined") {
 		return "bun";
 	}
-	if (typeof rfDeno !== "undefined") {
+	if (typeof rtiDeno !== "undefined") {
 		return "deno";
 	}
-	if (typeof rfNode !== "undefined") {
+	if (typeof rtiNode !== "undefined") {
 		return "nodejs";
 	}
 	if (
-		rfES?.userAgentData?.brands?.brand === "Android System WebView" ||
-		rfES?.userAgentData?.brands?.brand === "Chrome" ||
-		rfES?.userAgentData?.brands?.brand === "Chromium" ||
-		rfES?.userAgentData?.brands?.brand === "Edge" ||
-		rfES?.userAgentData?.brands?.brand === "Firefox" ||
-		rfES?.userAgentData?.brands?.brand === "Google Chrome" ||
-		rfES?.userAgentData?.brands?.brand === "Microsoft Edge" ||
-		rfES?.userAgentData?.brands?.brand === "Mozilla Firefox" ||
-		rfES?.userAgentData?.brands?.brand === "Opera" ||
-		rfES?.userAgentData?.brands?.brand === "Safari" ||
-		rfES?.userAgentData?.brands?.brand === "Samsung Internet" ||
-		rfES?.userAgentData?.brands?.brand === "WebView" ||
-		rfES?.userAgentData?.brands?.brand?.endsWith(" WebView")
+		rtiES?.userAgentData?.brands?.brand === "Android System WebView" ||
+		rtiES?.userAgentData?.brands?.brand === "Chrome" ||
+		rtiES?.userAgentData?.brands?.brand === "Chromium" ||
+		rtiES?.userAgentData?.brands?.brand === "Edge" ||
+		rtiES?.userAgentData?.brands?.brand === "Firefox" ||
+		rtiES?.userAgentData?.brands?.brand === "Google Chrome" ||
+		rtiES?.userAgentData?.brands?.brand === "Microsoft Edge" ||
+		rtiES?.userAgentData?.brands?.brand === "Mozilla Firefox" ||
+		rtiES?.userAgentData?.brands?.brand === "Opera" ||
+		rtiES?.userAgentData?.brands?.brand === "Safari" ||
+		rtiES?.userAgentData?.brands?.brand === "Samsung Internet" ||
+		rtiES?.userAgentData?.brands?.brand === "WebView" ||
+		rtiES?.userAgentData?.brands?.brand?.endsWith(" WebView")
 	) {
 		return "browser";
 	}
 	return null;
 }
 function getSystemName(): SystemName | null {
-	switch (rfDeno?.os) {
+	switch (rtiDeno?.os) {
 		case "aix":
+			return "aix";
 		case "android":
-		case "freebsd":
-		case "illumos":
-		case "linux":
-		case "netbsd":
-		case "solaris":
-		case "windows":
-			return rfDeno.os;
+			return "android";
 		case "darwin":
 			return "macos";
+		case "freebsd":
+			return "freebsd";
+		case "illumos":
+			return "illumos";
+		case "linux":
+			return "linux";
+		case "netbsd":
+			return "netbsd";
+		case "solaris":
+			return "solaris";
+		case "windows":
+			return "windows";
 		default:
 			break;
 	}
-	switch (rfNode?.platform) {
+	switch (rtiNode?.platform) {
 		case "aix":
+			return "aix";
 		case "android":
+			return "android";
 		case "cygwin":
-		case "freebsd":
-		case "haiku":
-		case "linux":
-		case "netbsd":
-		case "openbsd":
-			return rfNode.platform;
+			return "cygwin";
 		case "darwin":
 			return "macos";
+		case "freebsd":
+			return "freebsd";
+		case "haiku":
+			return "haiku";
+		case "linux":
+			return "linux";
+		case "netbsd":
+			return "netbsd";
+		case "openbsd":
+			return "openbsd";
 		case "sunos":
 			return "solaris";
 		case "win32":
@@ -163,7 +189,7 @@ function getSystemName(): SystemName | null {
 		default:
 			break;
 	}
-	switch (rfES?.userAgentData?.platform) {
+	switch (rtiES?.userAgentData?.platform) {
 		case "Android":
 			return "android";
 		case "Chrome OS":
@@ -181,33 +207,33 @@ function getSystemName(): SystemName | null {
 		default:
 			break;
 	}
-	if (rfES?.platform === "iPhone") {
+	if (rtiES?.platform === "iPhone") {
 		return "ios";
 	}
-	if (rfES?.platform?.startsWith("Linux")) {
+	if (rtiES?.platform?.startsWith("Linux")) {
 		return "linux";
 	}
 	if (
-		rfES?.platform === "MacIntel" ||
-		rfES?.platform?.startsWith("Mac")
+		rtiES?.platform === "MacIntel" ||
+		rtiES?.platform?.startsWith("Mac")
 	) {
 		return "macos";
 	}
-	if (rfES?.platform === "Win32") {
+	if (rtiES?.platform === "Win32") {
 		return "windows";
 	}
 	return null;
 }
 /**
- * Architecture of the runtime, or `null` if unknown.
+ * Architecture of the runtime; `null` if unknown.
  */
 export const runtimeArch: RuntimeArch | null = getRuntimeArch();
 /**
- * Name of the runtime, or `null` if unknown.
+ * Name of the runtime; `null` if unknown.
  */
 export const runtimeName: RuntimeName | null = getRuntimeName();
 /**
- * Whether the runtime is compatible to the `node` modules.
+ * Whether the runtime is (most likely) compatible to the `node` modules.
  */
 export const runtimeIsCompatibleNode: boolean = (
 	runtimeName === "bun" ||
@@ -215,34 +241,35 @@ export const runtimeIsCompatibleNode: boolean = (
 	runtimeName === "deno" ||
 	runtimeName === "nodejs"
 );
-/**
- * Whether the runtime is compatible to the TypeScript in full support.
- */
-export const runtimeIsCompatibleTypeScriptFull: boolean = (
-	runtimeName === "bun" ||
-	runtimeName === "deno" ||
-	((
+function getTypeScriptSupportStatus(): TypeScriptSupportStatus {
+	if (
+		runtimeName === "bun" ||
+		runtimeName === "deno"
+	) {
+		return true;
+	}
+	if (
 		runtimeName === "cloudflare-workers" ||
 		runtimeName === "nodejs"
-	) && rfNode?.features?.typescript === "transform")
-);
+	) {
+		switch (rtiNode?.features?.typescript) {
+			case false:
+				return false;
+			case "strip":
+				return "lite";
+			case "transform":
+				return true;
+			default:
+				break;
+		}
+	}
+	return false;
+}
 /**
- * Whether the runtime is compatible to the TypeScript in limit/lite support.
+ * Whether the runtime is compatible to the TypeScript.
  */
-export const runtimeIsCompatibleTypeScriptLite: boolean = (
-	runtimeName === "bun" ||
-	runtimeName === "deno" ||
-	(
-		(
-			runtimeName === "cloudflare-workers" ||
-			runtimeName === "nodejs"
-		) && (
-			rfNode?.features?.typescript === "transform" ||
-			rfNode?.features?.typescript === "strip"
-		)
-	)
-);
+export const runtimeIsCompatibleTypeScript: TypeScriptSupportStatus = getTypeScriptSupportStatus();
 /**
- * Name of the system, or `null` if unknown.
+ * Name of the system; `null` if unknown.
  */
 export const systemName: SystemName | null = getSystemName();

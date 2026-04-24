@@ -61,10 +61,7 @@ This does not request any runtime permission.
   const runtimeIsCompatibleNode: boolean;
   ```
 - ```ts
-  const runtimeIsCompatibleTypeScriptFull: boolean;
-  ```
-- ```ts
-  const runtimeIsCompatibleTypeScriptLite: boolean;
+  const runtimeIsCompatibleTypeScript: TypeScriptSupportStatus;
   ```
 - ```ts
   const systemName: SystemName | null;
