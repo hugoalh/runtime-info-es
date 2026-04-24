@@ -3,9 +3,10 @@
 [**⚖️** MIT](./LICENSE.md)
 
 🔗
-[GitHub](https://github.com/hugoalh/runtime-info-es)
-[JSR](https://jsr.io/@hugoalh/runtime-info)
-[NPM](https://www.npmjs.com/package/@hugoalh/runtime-info)
+[DistBoard @hugoalh](https://hugoalh.github.io/distboard/target/runtime_info_ecmascript)
+● [GitHub](https://github.com/hugoalh/runtime-info-es)
+● [JSR](https://jsr.io/@hugoalh/runtime-info)
+● [NPM](https://www.npmjs.com/package/@hugoalh/runtime-info)
 
 An ECMAScript module for runtime information.
 
