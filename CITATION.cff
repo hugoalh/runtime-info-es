@@ -8,11 +8,7 @@ authors:
 repository-code: "https://github.com/hugoalh/runtime-info-es"
 keywords:
   - "ecmascript"
-  - "ecmascript-module"
   - "es"
-  - "es-module"
-  - "esm"
-  - "esmodule"
   - "info"
   - "information"
   - "javascript"
