@@ -1,3 +1,4 @@
+//#region Polyfill
 type NavigatorUserAgentDataPlatform =
 	| "Android"
 	| "Chrome OS"
@@ -16,6 +17,30 @@ interface NavigatorPolyfill extends Partial<Navigator> {
 		platform?: NavigatorUserAgentDataPlatform;
 	};
 }
+type NodeArchitecturePolyfill =
+	| "arm"
+	| "arm64"
+	| "ia32"
+	| "loong64"
+	| "mips"
+	| "mipsel"
+	| "ppc"
+	| "ppc64"
+	| "riscv64"
+	| "s390"
+	| "s390x"
+	| "x32"
+	| "x64";
+//#endregion
+//#region Runtime Instance
+const rtiES = globalThis?.navigator as NavigatorPolyfill;
+//@ts-ignore `Bun` maybe not exist.
+const rtiBun = globalThis?.Bun;
+//dnt-shim-ignore
+const rtiDeno = globalThis?.Deno?.build;
+//@ts-ignore `process` maybe not exist.
+const rtiNode = globalThis?.process;
+//#endregion
 /**
  * Architecture of the runtime.
  */
@@ -32,42 +57,6 @@ export type RuntimeArch =
 	| "s390x"
 	| "x64"
 	| "x86";
-/**
- * Name of the runtime.
- */
-export type RuntimeName =
-	| "browser"
-	| "bun"
-	| "cloudflare-workers"
-	| "deno"
-	| "nodejs";
-/**
- * Name of the system.
- */
-export type SystemName =
-	| "aix"
-	| "android"
-	| "chromeos"
-	| "chromiumos"
-	| "cygwin"
-	| "freebsd"
-	| "haiku"
-	| "illumos"
-	| "ios"
-	| "linux"
-	| "macos"
-	| "netbsd"
-	| "openbsd"
-	| "solaris"
-	| "windows";
-export type TypeScriptSupportStatus = boolean | "lite";
-const rtiES = globalThis?.navigator as NavigatorPolyfill;
-//@ts-ignore `Bun` maybe not exist.
-const rtiBun = globalThis?.Bun;
-//dnt-shim-ignore
-const rtiDeno = globalThis?.Deno?.build;
-//@ts-ignore `process` maybe not exist.
-const rtiNode = globalThis?.process;
 function getRuntimeArch(): RuntimeArch | null {
 	switch (rtiDeno?.arch) {
 		case "aarch64":
@@ -77,7 +66,7 @@ function getRuntimeArch(): RuntimeArch | null {
 		default:
 			break;
 	}
-	switch (rtiNode?.arch as string) {
+	switch (rtiNode?.arch as NodeArchitecturePolyfill) {
 		case "arm":
 			return "arm";
 		case "arm64":
@@ -108,6 +97,19 @@ function getRuntimeArch(): RuntimeArch | null {
 	}
 	return null;
 }
+/**
+ * Architecture of the runtime; `null` if unknown.
+ */
+export const runtimeArch: RuntimeArch | null = getRuntimeArch();
+/**
+ * Name of the runtime.
+ */
+export type RuntimeName =
+	| "browser"
+	| "bun"
+	| "cloudflare-workers"
+	| "deno"
+	| "nodejs";
 function getRuntimeName(): RuntimeName | null {
 	if (rtiES.userAgent === "Cloudflare-Workers") {
 		return "cloudflare-workers";
@@ -140,6 +142,67 @@ function getRuntimeName(): RuntimeName | null {
 	}
 	return null;
 }
+/**
+ * Name of the runtime; `null` if unknown.
+ */
+export const runtimeName: RuntimeName | null = getRuntimeName();
+/**
+ * Whether the runtime is (most likely) compatible to the NodeJS (`node:`) modules.
+ */
+export const runtimeIsCompatibleNode: boolean = (
+	runtimeName === "bun" ||
+	runtimeName === "cloudflare-workers" ||
+	runtimeName === "deno" ||
+	runtimeName === "nodejs"
+);
+export type TypeScriptSupportStatus = boolean | "lite";
+function getTypeScriptCompatibleStatus(): TypeScriptSupportStatus {
+	if (
+		runtimeName === "bun" ||
+		runtimeName === "deno"
+	) {
+		return true;
+	}
+	if (
+		runtimeName === "cloudflare-workers" ||
+		runtimeName === "nodejs"
+	) {
+		switch (rtiNode?.features?.typescript) {
+			case false:
+				return false;
+			case "strip":
+				return "lite";
+			case "transform":
+				return true;
+			default:
+				break;
+		}
+	}
+	return false;
+}
+/**
+ * Whether the runtime is compatible to the TypeScript.
+ */
+export const runtimeIsCompatibleTypeScript: TypeScriptSupportStatus = getTypeScriptCompatibleStatus();
+/**
+ * Name of the system.
+ */
+export type SystemName =
+	| "aix"
+	| "android"
+	| "chromeos"
+	| "chromiumos"
+	| "cygwin"
+	| "freebsd"
+	| "haiku"
+	| "illumos"
+	| "ios"
+	| "linux"
+	| "macos"
+	| "netbsd"
+	| "openbsd"
+	| "solaris"
+	| "windows";
 function getSystemName(): SystemName | null {
 	switch (rtiDeno?.os) {
 		case "aix":
@@ -224,51 +287,6 @@ function getSystemName(): SystemName | null {
 	}
 	return null;
 }
-/**
- * Architecture of the runtime; `null` if unknown.
- */
-export const runtimeArch: RuntimeArch | null = getRuntimeArch();
-/**
- * Name of the runtime; `null` if unknown.
- */
-export const runtimeName: RuntimeName | null = getRuntimeName();
-/**
- * Whether the runtime is (most likely) compatible to the `node` modules.
- */
-export const runtimeIsCompatibleNode: boolean = (
-	runtimeName === "bun" ||
-	runtimeName === "cloudflare-workers" ||
-	runtimeName === "deno" ||
-	runtimeName === "nodejs"
-);
-function getTypeScriptSupportStatus(): TypeScriptSupportStatus {
-	if (
-		runtimeName === "bun" ||
-		runtimeName === "deno"
-	) {
-		return true;
-	}
-	if (
-		runtimeName === "cloudflare-workers" ||
-		runtimeName === "nodejs"
-	) {
-		switch (rtiNode?.features?.typescript) {
-			case false:
-				return false;
-			case "strip":
-				return "lite";
-			case "transform":
-				return true;
-			default:
-				break;
-		}
-	}
-	return false;
-}
-/**
- * Whether the runtime is compatible to the TypeScript.
- */
-export const runtimeIsCompatibleTypeScript: TypeScriptSupportStatus = getTypeScriptSupportStatus();
 /**
  * Name of the system; `null` if unknown.
  */
