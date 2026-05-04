@@ -155,8 +155,8 @@ export const runtimeIsCompatibleNode: boolean = (
 	runtimeName === "deno" ||
 	runtimeName === "nodejs"
 );
-export type TypeScriptSupportStatus = boolean | "lite";
-function getTypeScriptCompatibleStatus(): TypeScriptSupportStatus {
+export type TypeScriptCompatibleStatus = boolean | "lite";
+function getTypeScriptCompatibleStatus(): TypeScriptCompatibleStatus {
 	if (
 		runtimeName === "bun" ||
 		runtimeName === "deno"
@@ -183,7 +183,7 @@ function getTypeScriptCompatibleStatus(): TypeScriptSupportStatus {
 /**
  * Whether the runtime is compatible to the TypeScript.
  */
-export const runtimeIsCompatibleTypeScript: TypeScriptSupportStatus = getTypeScriptCompatibleStatus();
+export const runtimeIsCompatibleTypeScript: TypeScriptCompatibleStatus = getTypeScriptCompatibleStatus();
 /**
  * Name of the system.
  */
