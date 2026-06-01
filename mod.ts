@@ -291,3 +291,31 @@ function getSystemName(): SystemName | null {
  * Name of the system; `null` if unknown.
  */
 export const systemName: SystemName | null = getSystemName();
+/**
+ * File extension of the FFI (Foreign Function Interface).
+ */
+export type FFIExtension =
+	| ".dll"
+	| ".dylib"
+	| ".so";
+function getFFIExtension(): FFIExtension | null {
+	if (
+		runtimeName === null ||
+		runtimeName === "browser" ||
+		runtimeName === "cloudflare-workers"
+	) {
+		return null;
+	}
+	switch (systemName) {
+		case "macos":
+			return ".dylib";
+		case "windows":
+			return ".dll";
+		default:
+			return ".so";
+	}
+}
+/**
+ * File extension of the FFI (Foreign Function Interface); `null` if unknown or runtime unsupported.
+ */
+export const ffiExtension: FFIExtension | null = getFFIExtension();
