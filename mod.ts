@@ -1,39 +1,5 @@
-//#region Polyfill
-type NavigatorUserAgentDataPlatform =
-	| "Android"
-	| "Chrome OS"
-	| "Chromium OS"
-	| "iOS"
-	| "Linux"
-	| "macOS"
-	| "Windows"
-	| "Unknown";
-interface NavigatorPolyfill extends Partial<Navigator> {
-	platform?: string;
-	userAgentData?: {
-		brands?: {
-			brand?: string;
-		};
-		platform?: NavigatorUserAgentDataPlatform;
-	};
-}
-type NodeArchitecturePolyfill =
-	| "arm"
-	| "arm64"
-	| "ia32"
-	| "loong64"
-	| "mips"
-	| "mipsel"
-	| "ppc"
-	| "ppc64"
-	| "riscv64"
-	| "s390"
-	| "s390x"
-	| "x32"
-	| "x64";
-//#endregion
 //#region Runtime Instance
-const rtiES = globalThis?.navigator as NavigatorPolyfill;
+const rtiES = globalThis?.navigator;
 //@ts-ignore `Bun` maybe not exist.
 const rtiBun = globalThis?.Bun;
 //dnt-shim-ignore
@@ -58,7 +24,7 @@ export type RuntimeArch =
 	| "x64"
 	| "x86";
 function getRuntimeArch(): RuntimeArch | null {
-	switch (rtiDeno?.arch) {
+	switch (rtiDeno?.arch as string) {
 		case "aarch64":
 			return "arm64";
 		case "x86_64":
@@ -66,7 +32,7 @@ function getRuntimeArch(): RuntimeArch | null {
 		default:
 			break;
 	}
-	switch (rtiNode?.arch as NodeArchitecturePolyfill) {
+	switch (rtiNode?.arch as string) {
 		case "arm":
 			return "arm";
 		case "arm64":
@@ -123,21 +89,23 @@ function getRuntimeName(): RuntimeName | null {
 	if (typeof rtiNode !== "undefined") {
 		return "nodejs";
 	}
-	if (
-		rtiES?.userAgentData?.brands?.brand === "Android System WebView" ||
-		rtiES?.userAgentData?.brands?.brand === "Chrome" ||
-		rtiES?.userAgentData?.brands?.brand === "Chromium" ||
-		rtiES?.userAgentData?.brands?.brand === "Edge" ||
-		rtiES?.userAgentData?.brands?.brand === "Firefox" ||
-		rtiES?.userAgentData?.brands?.brand === "Google Chrome" ||
-		rtiES?.userAgentData?.brands?.brand === "Microsoft Edge" ||
-		rtiES?.userAgentData?.brands?.brand === "Mozilla Firefox" ||
-		rtiES?.userAgentData?.brands?.brand === "Opera" ||
-		rtiES?.userAgentData?.brands?.brand === "Safari" ||
-		rtiES?.userAgentData?.brands?.brand === "Samsung Internet" ||
-		rtiES?.userAgentData?.brands?.brand === "WebView" ||
-		rtiES?.userAgentData?.brands?.brand?.endsWith(" WebView")
-	) {
+	if (rtiES?.userAgentData?.brands.some(({ brand }: NavigatorUABrandVersion): boolean => {
+		return (
+			brand === "Android System WebView" ||
+			brand === "Chrome" ||
+			brand === "Chromium" ||
+			brand === "Edge" ||
+			brand === "Firefox" ||
+			brand === "Google Chrome" ||
+			brand === "Microsoft Edge" ||
+			brand === "Mozilla Firefox" ||
+			brand === "Opera" ||
+			brand === "Safari" ||
+			brand === "Samsung Internet" ||
+			brand === "WebView" ||
+			brand?.endsWith(" WebView")
+		);
+	})) {
 		return "browser";
 	}
 	return null;
@@ -204,7 +172,7 @@ export type SystemName =
 	| "solaris"
 	| "windows";
 function getSystemName(): SystemName | null {
-	switch (rtiDeno?.os) {
+	switch (rtiDeno?.os as string) {
 		case "aix":
 			return "aix";
 		case "android":
@@ -226,7 +194,7 @@ function getSystemName(): SystemName | null {
 		default:
 			break;
 	}
-	switch (rtiNode?.platform) {
+	switch (rtiNode?.platform as string) {
 		case "aix":
 			return "aix";
 		case "android":
