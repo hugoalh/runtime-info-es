@@ -7,6 +7,7 @@ authors:
   - name: "HUGOALH"
     alias: "hugoalh"
 repository-code: "https://github.com/hugoalh/runtime-info-es"
+abstract: "An ECMAScript module for runtime information."
 keywords:
   - "ecmascript"
   - "es"
