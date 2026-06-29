@@ -1,4 +1,3 @@
-//#region Runtime Instance
 const rtiES = globalThis?.navigator;
 //@ts-ignore `Bun` maybe not exist.
 const rtiBun = globalThis?.Bun;
@@ -6,7 +5,6 @@ const rtiBun = globalThis?.Bun;
 const rtiDeno = globalThis?.Deno?.build;
 //@ts-ignore `process` maybe not exist.
 const rtiNode = globalThis?.process;
-//#endregion
 /**
  * Architecture of the runtime.
  */
