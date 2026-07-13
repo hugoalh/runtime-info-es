@@ -84,13 +84,13 @@ jobs:
           npm --global config set unicode true
           npm --global config set update-notifier=false
       - name: "Analyze Routes"
+        if: "${{!cancelled() && env.CDV_RUN_LITE == 'false'}}"
         shell: "pwsh"
         run: |-
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $True
           [PSCustomObject]$Config = ConvertFrom-Json -InputObject (Get-Content -LiteralPath '.\deno.jsonc' -Raw -Encoding 'UTF8NoBOM') -Depth 100
-          If ($Env:CDV_RUN_LITE -ieq 'false') {
-            Add-Content -LiteralPath $Env:GITHUB_STEP_SUMMARY -Value @"
+          Add-Content -LiteralPath $Env:GITHUB_STEP_SUMMARY -Value @"
           # Routes
 
           | **Name** | **Build** | **Check** | **Publish** |
@@ -102,7 +102,6 @@ jobs:
           | NPM KaKi87 | $(($Null -ine $Config.tasks.'npm-kaki87-build') ? '✔️' : '❌') | $(($Null -ine $Config.tasks.'npm-kaki87-check') ? '✔️' : '❌') | $(($Null -ine $Config.tasks.'npm-kaki87-publish') ? '✔️' : '❌') |
           | NPM NPM | $(($Null -ine $Config.tasks.'npm-npm-build') ? '✔️' : '❌') | $(($Null -ine $Config.tasks.'npm-npm-check') ? '✔️' : '❌') | $(($Null -ine $Config.tasks.'npm-npm-publish') ? '✔️' : '❌') |
           "@
-          }
       - name: "Check Dependencies Update"
         if: "${{!cancelled() && env.CDV_RUN_LITE == 'false'}}"
         run: |-

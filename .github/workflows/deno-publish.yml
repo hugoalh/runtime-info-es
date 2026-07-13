@@ -141,8 +141,6 @@ jobs:
           | NPM KaKi87 | $(($Null -ine $Config.tasks.'npm-kaki87-build') ? '✔️' : '❌') | $($NPMKaKi87Publish ? '✔️' : '❌') | $($NPMKaKi87Dispatch ? '✔️' : '❌') |
           | NPM NPM | $(($Null -ine $Config.tasks.'npm-npm-build') ? '✔️' : '❌') | $($NPMNPMPublish ? '✔️' : '❌') | $($NPMNPMDispatch ? '✔️' : '❌') |
           "@
-          }
-          "@
           Add-Content -LiteralPath $Env:GITHUB_ENV -Value "CDV_DEPLOY_JSR=$($JSRDispatch.ToString().ToLower())"
           Add-Content -LiteralPath $Env:GITHUB_ENV -Value "CDV_DEPLOY_NPM_CODEBERG=$($NPMCodebergDispatch.ToString().ToLower())"
           Add-Content -LiteralPath $Env:GITHUB_ENV -Value "CDV_DEPLOY_NPM_GITHUB=$($NPMGitHubDispatch.ToString().ToLower())"
@@ -163,7 +161,7 @@ jobs:
         env:
           CDV_NPM_CODEBERG_TOKEN: "${{secrets.NPM_CODEBERG_TOKEN}}"
         run: |-
-          deno task npm-codeberg-build
+          deno task --if-present npm-codeberg-build
           deno task npm-codeberg-publish --token '^CDV_NPM_CODEBERG_TOKEN'
       - name: "Publish To NPM GitHub"
         if: "${{!cancelled() && steps.build-general.outcome == 'success' && env.CDV_DEPLOY_NPM_GITHUB == 'true'}}"
