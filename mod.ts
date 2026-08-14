@@ -1,7 +1,7 @@
 const rtiES = globalThis?.navigator;
 //@ts-ignore `Bun` maybe not exist.
 const rtiBun = globalThis?.Bun;
-//dnt-shim-ignore
+//@ts-ignore `Deno` maybe not exist.
 const rtiDeno = globalThis?.Deno?.build;
 //@ts-ignore `process` maybe not exist.
 const rtiNode = globalThis?.process;
@@ -121,35 +121,13 @@ export const runtimeIsCompatibleNode: boolean = (
 	runtimeName === "deno" ||
 	runtimeName === "nodejs"
 );
-export type TypeScriptCompatibleStatus = boolean | "lite";
-function getTypeScriptCompatibleStatus(): TypeScriptCompatibleStatus {
-	if (
-		runtimeName === "bun" ||
-		runtimeName === "deno"
-	) {
-		return true;
-	}
-	if (
-		runtimeName === "cloudflare-workers" ||
-		runtimeName === "nodejs"
-	) {
-		switch (rtiNode?.features?.typescript) {
-			case false:
-				return false;
-			case "strip":
-				return "lite";
-			case "transform":
-				return true;
-			default:
-				break;
-		}
-	}
-	return false;
-}
 /**
  * Whether the runtime is compatible to the TypeScript.
  */
-export const runtimeIsCompatibleTypeScript: TypeScriptCompatibleStatus = getTypeScriptCompatibleStatus();
+export const runtimeIsCompatibleTypeScript: boolean = (
+	runtimeName === "bun" ||
+	runtimeName === "deno"
+);
 /**
  * Name of the system.
  */

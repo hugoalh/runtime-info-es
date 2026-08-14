@@ -47,7 +47,7 @@ This does not request any runtime permission.
   const runtimeIsCompatibleNode: boolean;
   ```
 - ```ts
-  const runtimeIsCompatibleTypeScript: TypeScriptCompatibleStatus;
+  const runtimeIsCompatibleTypeScript: boolean;
   ```
 - ```ts
   const systemName: SystemName | null;
