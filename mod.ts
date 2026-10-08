@@ -6,9 +6,9 @@ const rtiDeno = globalThis?.Deno?.build;
 //@ts-ignore `process` maybe not exist.
 const rtiNode = globalThis?.process;
 /**
- * Architecture of the runtime.
+ * Architecture.
  */
-export type RuntimeArch =
+export type Architecture =
 	| "arm"
 	| "arm64"
 	| "loong64"
@@ -21,7 +21,7 @@ export type RuntimeArch =
 	| "s390x"
 	| "x64"
 	| "x86";
-function getRuntimeArch(): RuntimeArch | null {
+function getRuntimeArch(): Architecture | null {
 	switch (rtiDeno?.arch as string) {
 		case "aarch64":
 			return "arm64";
@@ -64,7 +64,25 @@ function getRuntimeArch(): RuntimeArch | null {
 /**
  * Architecture of the runtime; `null` if unknown.
  */
-export const runtimeArch: RuntimeArch | null = getRuntimeArch();
+export const runtimeArch: Architecture | null = getRuntimeArch();
+/**
+ * Endianness.
+ */
+export type Endian =
+	| "BE"
+	| "LE";
+function getRuntimeEndian(): Endian {
+	const buffer: ArrayBuffer = new ArrayBuffer(2);
+	const view: DataView = new DataView(buffer);
+	view.setInt16(0, 256, true);
+	return ((new Int16Array(buffer)[0] === 256) ? "LE" : "BE");
+}
+/**
+ * Endian of the runtime.
+ * 
+ * This does not rely on NodeJS API `os.endianness()`.
+ */
+export const runtimeEndian: Endian = getRuntimeEndian();
 /**
  * Name of the runtime.
  */

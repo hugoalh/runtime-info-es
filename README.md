@@ -38,7 +38,10 @@ This does not request any runtime permission.
 ## 🧩 APIs
 
 - ```ts
-  const runtimeArch: RuntimeArch | null;
+  const runtimeArch: Architecture | null;
+  ```
+- ```ts
+  const runtimeEndian: Endian;
   ```
 - ```ts
   const runtimeName: RuntimeName | null;
@@ -53,7 +56,7 @@ This does not request any runtime permission.
   const systemName: SystemName | null;
   ```
 - ```ts
-  type RuntimeArch =
+  type Architecture =
     | "arm"
     | "arm64"
     | "loong64"
