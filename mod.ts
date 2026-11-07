@@ -1,10 +1,15 @@
-const rtiES = globalThis?.navigator;
+//@ts-ignore `Bare` maybe not exist.
+const rtiBare = globalThis?.Bare;
 //@ts-ignore `Bun` maybe not exist.
 const rtiBun = globalThis?.Bun;
 //@ts-ignore `Deno` maybe not exist.
 const rtiDeno = globalThis?.Deno?.build;
+//@ts-ignore `navigator` maybe not exist.
+const rtiNavigator = globalThis?.navigator;
 //@ts-ignore `process` maybe not exist.
-const rtiNode = globalThis?.process;
+const rtiProcess = globalThis?.process;
+//@ts-ignore `tjs` maybe not exist.
+const rtiTxikiJS = globalThis?.tjs?.engine;
 /**
  * Architecture.
  */
@@ -16,12 +21,33 @@ export type Architecture =
 	| "mipsel"
 	| "ppc"
 	| "ppc64"
+	| "riscv32"
 	| "riscv64"
 	| "s390"
 	| "s390x"
 	| "x64"
 	| "x86";
 function getRuntimeArch(): Architecture | null {
+	switch (rtiBare?.arch as string) {
+		case "arm":
+			return "arm";
+		case "arm64":
+			return "arm64";
+		case "ia32":
+			return "x86";
+		case "mips":
+			return "mips";
+		case "mipsel":
+			return "mipsel";
+		case "riscv32":
+			return "riscv32";
+		case "riscv64":
+			return "riscv64";
+		case "x64":
+			return "x64";
+		default:
+			break;
+	}
 	switch (rtiDeno?.arch as string) {
 		case "aarch64":
 			return "arm64";
@@ -30,7 +56,7 @@ function getRuntimeArch(): Architecture | null {
 		default:
 			break;
 	}
-	switch (rtiNode?.arch as string) {
+	switch (rtiProcess?.arch as string) {
 		case "arm":
 			return "arm";
 		case "arm64":
@@ -87,14 +113,21 @@ export const runtimeEndian: Endian = getRuntimeEndian();
  * Name of the runtime.
  */
 export type RuntimeName =
+	| "bare"
 	| "browser"
 	| "bun"
 	| "cloudflare-workers"
 	| "deno"
-	| "nodejs";
+	| "ende"
+	| "kaluma"
+	| "nodejs"
+	| "txikijs";
 function getRuntimeName(): RuntimeName | null {
-	if (rtiES.userAgent === "Cloudflare-Workers") {
+	if (rtiNavigator.userAgent === "Cloudflare-Workers") {
 		return "cloudflare-workers";
+	}
+	if (typeof rtiBare !== "undefined") {
+		return "bare";
 	}
 	if (typeof rtiBun !== "undefined") {
 		return "bun";
@@ -102,10 +135,25 @@ function getRuntimeName(): RuntimeName | null {
 	if (typeof rtiDeno !== "undefined") {
 		return "deno";
 	}
-	if (typeof rtiNode !== "undefined") {
+	if (typeof rtiProcess !== "undefined") {
+		//@ts-ignore `binding` and `builtin_modules` are exclusive in Kaluma, not exist in others.
+		if (typeof rtiProcess.binding !== "undefined" && typeof rtiProcess.builtin_modules !== "undefined") {
+			return "kaluma";
+		}
 		return "nodejs";
 	}
-	if (rtiES?.userAgentData?.brands.some(({ brand }: NavigatorUABrandVersion): boolean => {
+	if (typeof rtiTxikiJS !== "undefined") {
+		return "txikijs";
+	}
+	if (
+		rtiNavigator?.userAgentData?.brands.some(({ brand }: NavigatorUABrandVersion): boolean => {
+			return (brand === "Ende");
+		}) ||
+		rtiNavigator?.userAgent.startsWith("Ende/")
+	) {
+		return "ende";
+	}
+	if (rtiNavigator?.userAgentData?.brands.some(({ brand }: NavigatorUABrandVersion): boolean => {
 		return (
 			brand === "Android System WebView" ||
 			brand === "Chrome" ||
@@ -166,6 +214,20 @@ export type SystemName =
 	| "solaris"
 	| "windows";
 function getSystemName(): SystemName | null {
+	switch (rtiBare?.platform as string) {
+		case "android":
+			return "android";
+		case "darwin":
+			return "macos";
+		case "ios":
+			return "ios";
+		case "linux":
+			return "linux";
+		case "win32":
+			return "windows";
+		default:
+			break;
+	}
 	switch (rtiDeno?.os as string) {
 		case "aix":
 			return "aix";
@@ -188,7 +250,7 @@ function getSystemName(): SystemName | null {
 		default:
 			break;
 	}
-	switch (rtiNode?.platform as string) {
+	switch (rtiProcess?.platform as string) {
 		case "aix":
 			return "aix";
 		case "android":
@@ -214,7 +276,7 @@ function getSystemName(): SystemName | null {
 		default:
 			break;
 	}
-	switch (rtiES?.userAgentData?.platform) {
+	switch (rtiNavigator?.userAgentData?.platform) {
 		case "Android":
 			return "android";
 		case "Chrome OS":
@@ -232,19 +294,19 @@ function getSystemName(): SystemName | null {
 		default:
 			break;
 	}
-	if (rtiES?.platform === "iPhone") {
+	if (rtiNavigator?.platform === "iPhone") {
 		return "ios";
 	}
-	if (rtiES?.platform?.startsWith("Linux")) {
+	if (rtiNavigator?.platform?.startsWith("Linux")) {
 		return "linux";
 	}
 	if (
-		rtiES?.platform === "MacIntel" ||
-		rtiES?.platform?.startsWith("Mac")
+		rtiNavigator?.platform === "MacIntel" ||
+		rtiNavigator?.platform?.startsWith("Mac")
 	) {
 		return "macos";
 	}
-	if (rtiES?.platform === "Win32") {
+	if (rtiNavigator?.platform === "Win32") {
 		return "windows";
 	}
 	return null;

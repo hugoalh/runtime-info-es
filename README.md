@@ -64,6 +64,7 @@ This does not request any runtime permission.
     | "mipsel"
     | "ppc"
     | "ppc64"
+    | "riscv32"
     | "riscv64"
     | "s390"
     | "s390x"
@@ -72,11 +73,15 @@ This does not request any runtime permission.
   ```
 - ```ts
   type RuntimeName =
+    | "bare"
     | "browser"
     | "bun"
     | "cloudflare-workers"
     | "deno"
-    | "nodejs";
+    | "ende"
+    | "kaluma"
+    | "nodejs"
+    | "txikijs";
   ```
 - ```ts
   type SystemName =
