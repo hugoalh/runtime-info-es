@@ -118,6 +118,7 @@ export type RuntimeName =
 	| "bun"
 	| "cloudflare-workers"
 	| "deno"
+	| "dune"
 	| "ende"
 	| "kaluma"
 	| "nodejs"
@@ -139,6 +140,9 @@ function getRuntimeName(): RuntimeName | null {
 		//@ts-ignore `binding` and `builtin_modules` are exclusive in Kaluma, not exist in others.
 		if (typeof rtiProcess.binding !== "undefined" && typeof rtiProcess.builtin_modules !== "undefined") {
 			return "kaluma";
+		}
+		if (typeof rtiProcess.versions.dune !== "undefined") {
+			return "dune";
 		}
 		return "nodejs";
 	}

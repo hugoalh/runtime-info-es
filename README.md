@@ -78,6 +78,7 @@ This does not request any runtime permission.
     | "bun"
     | "cloudflare-workers"
     | "deno"
+    | "dune"
     | "ende"
     | "kaluma"
     | "nodejs"
